@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Read CSV</title>
+    <script type="text/javascript" src="papaparse.min.js"></script>
+</head>
+<body>
+    <input type="file" id="upload-csv" accept=".csv">
+    <button id="uploadconfirm">Read CSV</button>
+    <table id="tbl-data">
+
+    </table>
+    <script type="text/javascript">
+        var combinationArray = []; 
+        var sumArray = []; 
+        const myMap = new Map();
+
+        const uploadconfirm = document.getElementById("uploadconfirm").addEventListener("click", () => {
+            Papa.parse(document.getElementById("upload-csv").files[0], {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results){
+                    
+                    
+                    
+                    
+                    for (let i = 0; i < results.data.length; i++) {
+                       
+                        
+                        
+
+                        if (combinationArray.indexOf(results.data[i].Assetbeingsold+"-"+results.data[i].Assetbeingpurchased)==-1){
+                            combinationArray.push(results.data[i].Assetbeingsold+"-"+results.data[i].Assetbeingpurchased)
+                            console.log(results.data[i].Assetbeingsold+"-"+results.data[i].Assetbeingpurchased);
+                        }//first question.
+                    
+                         
+                        if (sumArray[results.data[i].AccountOwner] !== undefined) {
+                            sumArray[results.data[i].AccountOwner] = sumArray[results.data[i].AccountOwner]+1
+                           
+                        
+                        }else {
+                            sumArray[results.data[i].AccountOwner] = 1;
+                        }
+
+                        if(myMap.has(results.data[i].AccountOwner)){
+                            const prueba = myMap.get(results.data[i].AccountOwner);
+                            let sumatoria = {
+                                dolars: parseInt(prueba.dolars)+parseInt(results.data[i].DollarValue), 
+                                qOperations: prueba.qOperations + 1
+                        }
+                        myMap.set(results.data[i].AccountOwner, sumatoria)
+                        }else{
+                            const store = {
+                                dolars: results.data[i].DollarValue,
+                                qOperations: 1
+                            }
+                            myMap.set(results.data[i].AccountOwner, store)
+                        }
+ 
+                    }
+
+                    console.log(sumArray) 
+ 
+                    var sum = 0;
+                    for (const key in sumArray) {
+                        if (sumArray[key] >= 500){
+                            sum = sum+1;
+                        }
+                    }
+                    console.log(sum);  //second question.
+                    
+                    myMapAvr = new Map
+                    
+                    
+                    myMap.forEach(logMapElements);
+
+                    function logMapElements(value, key, map) {
+                        const prom = value.dolars / value.qOperations
+                        myMapAvr.set(key, prom)
+                        }
+
+                    
+                    
+                    const myAvrSortedMap = new Map( [...myMapAvr].sort((x, y) => x[1] - y[1]));
+                    console.log(myAvrSortedMap) //bonus question.
+                    
+                   
+                    
+                    
+                                 
+
+
+
+                    
+                    
+                   
+                    
+                    
+                
+                
+                
+                
+                }
+
+            })
+        })
+
+                
+                
+
+                
+                   
+    </script>
+    <div id="result">
+
+    </div>
+</body>
+</html>
